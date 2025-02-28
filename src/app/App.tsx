@@ -9,7 +9,7 @@ export const App = () => {
     return (
         <div className="flex flex-col h-screen">
             <Header className="bg-blue-500 text-white text-center py-4 fixed w-full top-0" />
-            <div className="flex flex-1 pt-16">
+            <div className="flex flex-1 pt-22">
                 <SideNav />
                 <Routes>
                     <Route path="/content" element={<Content />} />
