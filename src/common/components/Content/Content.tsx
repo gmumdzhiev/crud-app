@@ -1,0 +1,1 @@
+export const Content = () => { return ( <div className="flex-1 bg-amber-300 p-4 ml-[25%]"> <h1>Welcome to the Content Section</h1> <p>This is where your content goes.</p> </div> ); };
