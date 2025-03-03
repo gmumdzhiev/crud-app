@@ -3,7 +3,7 @@ import './App.css';
 import { Header } from "../common/components/Header/Header.tsx";
 import { SideNav } from "../common/components/SideNav/SideNav.tsx";
 import { Content } from "../common/components/Content/Content.tsx";
-import { About } from "../common/components/About/About.tsx"; // Assuming you have an About component
+import { About } from "../common/components/About/About.tsx";
 
 export const App = () => {
     return (
