@@ -81,8 +81,9 @@ export const Content = () => {
     }
 
     return (
-        <div className="flex-1 bg-white p-4 ml-[25%]">
-            <div className="flex mb-4">
+        <div className="flex-1 bg-white p-4 ml-[0%] sm:ml-[4%] md:ml-[6%] lg:ml-[8%]">
+
+        <div className="flex mb-4 mt-5">
                 <button
                     className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded mr-2"
                     onClick={() => setIsDrawerOpen(true)}

@@ -1,20 +1,26 @@
-import { Routes, Route } from 'react-router-dom';
-import './App.css';
-import { Header } from "../common/components/Header/Header.tsx";
-import { SideNav } from "../common/components/SideNav/SideNav.tsx";
-import { Content } from "../common/components/Content/Content.tsx";
-import { About } from "../common/components/About/About.tsx";
+import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import {Header} from "../common/components/Header/Header.tsx";
+import {SideNav} from "../common/components/SideNav/SideNav.tsx";
+import {Content} from "../common/components/Content/Content.tsx";
+import {About} from "../common/components/About/About.tsx";
+
 
 export const App = () => {
+    const [isSideNavOpen, setIsSideNavOpen] = useState(false);
+
     return (
         <div className="flex flex-col h-screen">
-            <Header className="bg-blue-500 text-white text-center py-4 fixed w-full top-0" />
-            <div className="flex flex-1 pt-22">
-                <SideNav />
-                <Routes>
-                    <Route path="/content" element={<Content />} />
-                    <Route path="/about" element={<About />} />
-                </Routes>
+            <Header toggleSideNav={() => setIsSideNavOpen(true)} />
+
+            <div className="flex flex-1 pt-16">
+                <SideNav isOpen={isSideNavOpen} closeSideNav={() => setIsSideNavOpen(false)} />
+                <div className="flex-1 ml-0 md:ml-64">
+                    <Routes>
+                        <Route path="/content" element={<Content />} />
+                        <Route path="/about" element={<About />} />
+                    </Routes>
+                </div>
             </div>
         </div>
     );
