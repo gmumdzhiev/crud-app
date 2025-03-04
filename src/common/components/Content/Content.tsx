@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { faPlus, faPen, faTrash, faSearch, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import {faPlus, faPen, faTrash, faSearch, faChevronUp, faEnvelope, faGlobe} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Pagination } from "../Pagination/Pagination.tsx";
 import { IPost } from "./interfaces/IPost.ts";
@@ -16,6 +16,7 @@ import {ConfirmationModal} from "../ConfirmationModal/ConfirmationModal.tsx";
 export const Content = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { list: posts, status: isLoading, error } = useSelector((state: RootState) => state.posts);
+    const { list: users } = useSelector((state: RootState) => state.users);
     const [search, setSearch] = useState<string>('');
     const [expandedPost, setExpandedPost] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -25,7 +26,7 @@ export const Content = () => {
 
     const postsPerPage = 10;
 
-    console.log('posts', posts)
+    const getUser = (userId: number) => users.find(user => user.id === userId);
 
     useEffect(() => {
         dispatch(GetPosts());
@@ -35,11 +36,8 @@ export const Content = () => {
         post.title.toLowerCase().includes(search.toLowerCase())
     );
 
-
-
     const startIndex = (currentPage - 1) * postsPerPage;
     const displayedPosts = filteredPosts.slice(startIndex, startIndex + postsPerPage);
-
 
     const handlePostToggle = (id: string) => {
         setExpandedPost(prev => (prev === id ? null : id));
@@ -74,8 +72,6 @@ export const Content = () => {
         setPostToDelete(null);
     };
 
-
-
     if (isLoading === "loading") {
         return <div>Loading posts...</div>;
     }
@@ -88,7 +84,7 @@ export const Content = () => {
         <div className="flex-1 bg-white p-4 ml-[25%]">
             <div className="flex mb-4">
                 <button
-                    className="bg-[#ebe8e8] text-[#474747] w-[50px] h-[50px] rounded mr-2"
+                    className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded mr-2"
                     onClick={() => setIsDrawerOpen(true)}
                 >
                     <FontAwesomeIcon icon={faPlus} />
@@ -106,56 +102,66 @@ export const Content = () => {
                     </div>
                 </div>
             </div>
-
             <div>
-                {isLoading === "succeeded" && posts.length > 0 ? (
-                    displayedPosts.map(post => (
-                        <div key={post.id} className="flex justify-between mb-4 p-4 bg-white rounded shadow-md">
-                            <div className="w-full flex items-center text-[#474747]">
-                                <input type="checkbox" className="mr-2" />
-                                <div className="flex items-center cursor-pointer" onClick={() => handlePostToggle(post.id)}>
+                {displayedPosts.map(post => {
+                    const user = getUser(post.userId);
+                    return (
+                        <div key={post.id} className="bg-white p-4 rounded-lg shadow-md mb-4">
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-lg font-semibold text-gray-800 cursor-pointer" onClick={() => handlePostToggle(post.id)}>
                                     {post.title}
-                                    {expandedPost === post.id && (
-                                        <div>
-                                            <hr className="my-2 border-t-[1px] border-[#474747]" />
-                                            <p className="mt-2 text-[#474747]">{post.body}</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="mt-2 flex justify-end space-x-2 items-center">
+                                </h2>
                                 <FontAwesomeIcon
                                     icon={faChevronUp}
-                                    className={`ml-2 transition-transform duration-300 text-[#474747] ${expandedPost === post.id ? 'rotate-180' : ''}`}
+                                    className={`text-gray-500 transition-transform ${expandedPost === post.id ? 'rotate-180' : ''}`}
+                                    onClick={() => handlePostToggle(post.id)}
                                 />
-                                <button className="bg-[#ebe8e8] text-[#474747] w-[50px] h-[50px] rounded">
-                                    <FontAwesomeIcon icon={faPen} />
-                                </button>
-                                <button
-                                    className="bg-[#e6a5a5] text-[#fa0000] w-[50px] h-[50px] rounded"
-                                    onClick={() => handleDeleteRequest(post.id)}
-                                >
-                                    <FontAwesomeIcon icon={faTrash} />
-                                </button>
                             </div>
+                            {expandedPost === post.id && (
+                                <p className="mt-2 text-gray-600">{post.body}</p>
+                            )}
+                            {user && (
+                                <div className="mt-4 flex justify-between items-center text-sm text-gray-700 border-t pt-2">
+                                    <div className="flex items-center">
+                                        <img src={`/avatars/user-${user.id}.jpg`} alt="User Avatar"  className="w-14 h-14 rounded-full mr-4 object-cover" />
+                                        <div>
+                                            <p className="text-lg font-semibold italic border-b border-[#2f89fc]">{user.name}</p>
+                                            <p className="flex items-center">
+                                                <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-blue-500" />
+                                                {user.email}
+                                            </p>
+                                            <p className="flex">
+                                                <FontAwesomeIcon icon={faGlobe} className="mr-2 text-green-500" />
+                                                <a href={`https://${user.website}`} target="_blank" className="underline">
+                                                    {user.website}
+                                                </a>
+                                            </p>
+                                        </div>
+                                        </div>
+
+                                    <div className="flex space-x-2">
+                                        <button className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded">
+                                            <FontAwesomeIcon icon={faPen} />
+                                        </button>
+                                        <button
+                                            className="bg-[#e6a5a5] text-[#fa0000] hover:bg-[#fa0000] hover:text-[#fafafa] hover:cursor-pointer w-[50px] h-[50px] rounded"
+                                            onClick={() => handleDeleteRequest(post.id)}
+                                        >
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    ))
-                ): (
-                    <div>No posts available</div>
-                )}
-                <Pagination postsPerPage={postsPerPage} filteredPosts={filteredPosts} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                    );
+                })}
+                {displayedPosts.length === 0 && <div>No posts available</div>}
             </div>
+            <Pagination postsPerPage={postsPerPage} filteredPosts={filteredPosts} currentPage={currentPage} setCurrentPage={setCurrentPage} />
             <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title="Create New Post">
                 <Create onCreate={handleCreatePost} />
             </Drawer>
-
-            <ConfirmationModal
-                isOpen={isModalOpen}
-                onClose={handleCancel}
-                onConfirm={handleDelete}
-                message="Are you sure you want to delete this post?"
-            />
+            <ConfirmationModal isOpen={isModalOpen} onClose={handleCancel} onConfirm={handleDelete} message="Are you sure you want to delete this post?" />
         </div>
     );
 };
