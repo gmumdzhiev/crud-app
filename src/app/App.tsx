@@ -13,9 +13,9 @@ export const App = () => {
         <div className="flex flex-col h-screen">
             <Header toggleSideNav={() => setIsSideNavOpen(true)} />
 
-            <div className="flex flex-1 pt-16">
+            <div className="flex flex-1 pt-22">
                 <SideNav isOpen={isSideNavOpen} closeSideNav={() => setIsSideNavOpen(false)} />
-                <div className="flex-1 ml-0 md:ml-64">
+                <div className="flex-1 ml-0 md:ml-[25%] p-4">
                     <Routes>
                         <Route path="/content" element={<Content />} />
                         <Route path="/about" element={<About />} />
@@ -25,3 +25,4 @@ export const App = () => {
         </div>
     );
 };
+

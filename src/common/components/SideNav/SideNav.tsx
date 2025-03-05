@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquarePollHorizontal, faCircleInfo, faChevronUp, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSquarePollHorizontal, faCircleInfo, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 export const SideNav = ({ isOpen, closeSideNav }: { isOpen: boolean; closeSideNav: () => void }) => {
     const location = useLocation();

@@ -26,7 +26,11 @@ export const Content = () => {
 
     const postsPerPage = 10;
 
-    const getUser = (userId: number) => users.find(user => user.id === userId);
+    const getUser = (userId: number) => users.find(user => user.id === Number(userId));
+
+    const getUserAvatar = (userId: number, avatarUrl?: string) => {
+        return avatarUrl ? avatarUrl : `/avatars/user-${userId}.jpg`;
+    };
 
     useEffect(() => {
         dispatch(GetPosts());
@@ -43,12 +47,12 @@ export const Content = () => {
         setExpandedPost(prev => (prev === id ? null : id));
     };
 
-    const handleCreatePost = (title: string, body: string) => {
+    const handleCreatePost = (title: string, body: string, userId: string | number) => {
         const newPost: IPost = {
             id: uuidv4(),
             title,
             body,
-            userId: 1
+            userId: typeof userId === 'number' ? userId : parseInt(userId)
         };
         dispatch(addPost(newPost));
         setIsDrawerOpen(false);
@@ -81,9 +85,8 @@ export const Content = () => {
     }
 
     return (
-        <div className="flex-1 bg-white p-4 ml-[0%] sm:ml-[4%] md:ml-[6%] lg:ml-[8%]">
-
-        <div className="flex mb-4 mt-5">
+        <div>
+        <div className="flex mb-4">
                 <button
                     className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded mr-2"
                     onClick={() => setIsDrawerOpen(true)}
@@ -124,7 +127,15 @@ export const Content = () => {
                             {user && (
                                 <div className="mt-4 flex justify-between items-center text-sm text-gray-700 border-t pt-2">
                                     <div className="flex items-center">
-                                        <img src={`/avatars/user-${user.id}.jpg`} alt="User Avatar"  className="w-14 h-14 rounded-full mr-4 object-cover" />
+                                        <img
+                                            alt="User Avatar"
+                                            className="w-14 h-14 rounded-full mr-4 object-cover"
+                                            src={getUserAvatar(user.id, user.avatar)}
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src = '/avatars/user-default.jpg';
+                                            }}
+                                        />
+
                                         <div>
                                             <p className="text-lg font-semibold italic border-b border-[#2f89fc]">{user.name}</p>
                                             <p className="flex items-center">
