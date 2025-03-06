@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import {faPlus,faSearch } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Pagination } from "../Pagination/Pagination.tsx";
 import { IPost } from "./interfaces/IPost.ts";
 import { Drawer } from "../Drawer/Drawer.tsx";
@@ -16,6 +14,7 @@ import {Edit} from "../Edit/Edit.tsx";
 import {LoadingModal} from "../Modals/LoadingModal/LoadingModal.tsx";
 import {ErrorModal} from "../Modals/ErrorModal/ErrorModal.tsx";
 import {Post} from "../Post/Post.tsx";
+import {Search} from "../Search/Search.tsx";
 
 export const Content = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -82,26 +81,11 @@ export const Content = () => {
 
     return (
         <div>
-            <div className="flex mb-4">
-                <button
-                    className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded mr-2"
-                    onClick={() => setIsDrawerOpen(true)}
-                >
-                    <FontAwesomeIcon icon={faPlus} />
-                </button>
-                <div className="relative w-full text-[#474747]">
-                    <div className="flex items-center border-1 border-[#474747] rounded h-[50px]">
-                        <FontAwesomeIcon icon={faSearch} className="ml-3 text-[#474747]" />
-                        <input
-                            type="text"
-                            placeholder="Search posts..."
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            className="w-full h-[50px] p-2 border-0 rounded pl-3 focus:outline-none"
-                        />
-                    </div>
-                </div>
-            </div>
+            <Search
+                search={search}
+                setSearch={setSearch}
+                setIsDrawerOpen={setIsDrawerOpen}
+            />
             <div>
                 {displayedPosts.map(post => {
                     const user = getUser(post.userId);
