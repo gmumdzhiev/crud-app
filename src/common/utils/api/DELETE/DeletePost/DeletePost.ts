@@ -1,21 +1,21 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IGetPostErrorHandle } from "../../GET/GetPosts/interfaces/IGetPost.ts";
-
+import {markPostAsDeleted} from "../../GET/GetPosts/slices/getPostsSlice.ts";
 
 export const DeletePost = createAsyncThunk<
     string,
     string,
     { rejectValue: IGetPostErrorHandle }
 >(
-    'posts/deletePost',
-    async (postId: string, { rejectWithValue }) => {
+    "posts/deletePost",
+    async (postId: string, { dispatch, rejectWithValue }) => {
         try {
-            const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to delete post');
-            }
+
+            dispatch(markPostAsDeleted(postId));
+            const deletedPostIds = JSON.parse(localStorage.getItem("deletedPosts") || "[]");
+            deletedPostIds.push(postId);
+            localStorage.setItem("deletedPosts", JSON.stringify(deletedPostIds));
+
             return postId;
         } catch (error) {
             return rejectWithValue(error.message);
