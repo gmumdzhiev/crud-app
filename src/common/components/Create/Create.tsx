@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../app/store/store.ts";
 import { GetUsers } from "../../utils/api/GET/GetUsers/GetUsers.ts";
 import { addUser } from "../../utils/api/GET/GetUsers/slices/getUsersSlice.ts";
-import { IGetUsers } from "../../utils/api/GET/GetUsers/interfaces/IGetUsers.ts";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {addDoc, collection} from "firebase/firestore";
+import {db} from "../../../../firebaseConfig.ts";
 
 export const Create = ({ onCreate }: { onCreate: (title: string, body: string, userId: string) => void }) => {
     const dispatch = useDispatch<AppDispatch>();
@@ -27,7 +28,7 @@ export const Create = ({ onCreate }: { onCreate: (title: string, body: string, u
         }
     }, [dispatch, status]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         let finalUserId = userId;
 
@@ -36,74 +37,83 @@ export const Create = ({ onCreate }: { onCreate: (title: string, body: string, u
                 toast.error("First name and last name are required for new users.", {
                     position: "bottom-right",
                     autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
                 });
                 return;
             }
 
-            const newUserId = Date.now();
-
-            const newUser: IGetUsers = {
-                id: newUserId,
+            const newUser = {
+                id: Date.now(),
                 name: `${firstName} ${lastName}`,
                 email,
                 website,
                 avatar,
             };
 
-            dispatch(addUser(newUser));
-            finalUserId = newUserId;
+            try {
 
-            toast.success("New user created successfully!", {
-                position: "bottom-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
+                const docRef = await addDoc(collection(db, "users"), newUser);
+                console.log("New user added with ID: ", docRef.id);
+
+
+                dispatch(addUser(newUser));
+
+                finalUserId = newUser.id;
+                toast.success("New user created successfully!", {
+                    position: "bottom-right",
+                    autoClose: 3000,
+                });
+            } catch (error) {
+                console.error("Error adding user: ", error);
+                toast.error("Failed to create new user.");
+                return;
+            }
         }
 
         if (!finalUserId) {
             toast.error("Please select or create a user.", {
                 position: "bottom-right",
                 autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
             });
             return;
         }
 
-        onCreate(title, body, finalUserId.toString());
+        const newPost = {
+            id: Date.now(),
+            title,
+            body,
+            userId: finalUserId.toString(),
+        };
 
-        toast.success("Post created successfully!", {
-            position: "bottom-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        });
+        try {
 
-        setTitle("");
-        setBody("");
-        setUserId(null);
-        setIsNewUser(false);
-        setFirstName("");
-        setLastName("");
-        setEmail("");
-        setWebsite("");
-        setAvatar("");
+            await addDoc(collection(db, "posts"), newPost);
+            console.log("New post added!");
+
+
+            onCreate(title, body, finalUserId.toString());
+
+            toast.success("Post created successfully!", {
+                position: "bottom-right",
+                autoClose: 3000,
+            });
+
+
+            setTitle("");
+            setBody("");
+            setUserId(null);
+            setIsNewUser(false);
+            setFirstName("");
+            setLastName("");
+            setEmail("");
+            setWebsite("");
+            setAvatar("");
+        } catch (error) {
+            console.error("Error adding post: ", error);
+            toast.error("Failed to create post.");
+        }
     };
+
+
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">

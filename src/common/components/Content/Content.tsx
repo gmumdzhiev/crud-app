@@ -48,15 +48,19 @@ export const Content = () => {
     };
 
     const handleCreatePost = (title: string, body: string, userId: string | number) => {
+        const userIdParsed = typeof userId === 'number' ? userId : parseInt(userId);
+
         const newPost: IPost = {
             id: uuidv4(),
             title,
             body,
-            userId: typeof userId === 'number' ? userId : parseInt(userId)
+            userId: userIdParsed,
         };
+
         dispatch(addPost(newPost));
         setIsDrawerOpen(false);
     };
+
 
     const handleDeleteRequest = (postId: string) => {
         setPostToDelete(postId);
@@ -135,7 +139,6 @@ export const Content = () => {
                                                 (e.target as HTMLImageElement).src = '/avatars/user-default.jpg';
                                             }}
                                         />
-
                                         <div>
                                             <p className="text-lg font-semibold italic border-b border-[#2f89fc]">{user.name}</p>
                                             <p className="flex items-center">
@@ -149,8 +152,7 @@ export const Content = () => {
                                                 </a>
                                             </p>
                                         </div>
-                                        </div>
-
+                                    </div>
                                     <div className="flex space-x-2">
                                         <button className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded">
                                             <FontAwesomeIcon icon={faPen} />
@@ -167,12 +169,14 @@ export const Content = () => {
                         </div>
                     );
                 })}
+
                 {displayedPosts.length === 0 && <div>No posts available</div>}
             </div>
             <Pagination postsPerPage={postsPerPage} filteredPosts={filteredPosts} currentPage={currentPage} setCurrentPage={setCurrentPage} />
             <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title="Create New Post">
                 <Create onCreate={handleCreatePost} />
             </Drawer>
+
             <ConfirmationModal isOpen={isModalOpen} onClose={handleCancel} onConfirm={handleDelete} message="Are you sure you want to delete this post?" />
         </div>
     );
