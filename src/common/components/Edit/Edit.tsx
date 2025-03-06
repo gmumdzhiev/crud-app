@@ -3,13 +3,10 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../app/store/store.ts";
 import { IPost } from "../Content/interfaces/IPost.ts";
 import {updatePost} from "../../utils/api/UPDATE/updatePost/updatePost.ts";
+import {IProps} from "./IProps.ts";
 
-interface EditProps {
-    post: IPost;
-    onClose: () => void;
-}
 
-export const Edit = ({ post, onClose }: EditProps) => {
+export const Edit = ({ post, onClose }: IProps) => {
     const dispatch = useDispatch<AppDispatch>();
     const [title, setTitle] = useState(post.title);
     const [body, setBody] = useState(post.body);
@@ -24,20 +21,19 @@ export const Edit = ({ post, onClose }: EditProps) => {
     }
 
     return (
-        <div>
-            <h2 className="text-lg font-semibold mb-4">Edit Post</h2>
+        <div className="space-y-4">
             <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-2 mb-2 border rounded"
+                className="border border-[#474747] p-2 rounded w-full text-[#474747]"
             />
             <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                className="w-full p-2 mb-2 border rounded"
+                className="border border-[#474747] p-2 rounded w-full h-50 text-[#474747]"
             />
-            <button onClick={handleUpdate} className="bg-blue-500 text-white px-4 py-2 rounded">
+            <button onClick={handleUpdate} className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 hover:cursor-pointer">
                 Update Post
             </button>
         </div>

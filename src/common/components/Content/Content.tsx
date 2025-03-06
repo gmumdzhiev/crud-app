@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import {faPlus, faPen, faTrash, faSearch, faChevronUp, faEnvelope, faGlobe} from '@fortawesome/free-solid-svg-icons';
+import {faPlus,faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Pagination } from "../Pagination/Pagination.tsx";
 import { IPost } from "./interfaces/IPost.ts";
@@ -13,13 +13,15 @@ import {addPost} from "../../utils/api/GET/GetPosts/slices/getPostsSlice.ts";
 import {DeletePost} from "../../utils/api/DELETE/DeletePost/DeletePost.ts";
 import {ConfirmationModal} from "../ConfirmationModal/ConfirmationModal.tsx";
 import {Edit} from "../Edit/Edit.tsx";
+import {LoadingModal} from "../Modals/LoadingModal/LoadingModal.tsx";
+import {ErrorModal} from "../Modals/ErrorModal/ErrorModal.tsx";
+import {Post} from "../Post/Post.tsx";
 
 export const Content = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { list: posts, status: isLoading, error } = useSelector((state: RootState) => state.posts);
     const { list: users } = useSelector((state: RootState) => state.users);
     const [search, setSearch] = useState<string>('');
-    const [expandedPost, setExpandedPost] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -30,10 +32,6 @@ export const Content = () => {
     const postsPerPage = 10;
 
     const getUser = (userId: number) => users.find(user => user.id === Number(userId));
-
-    const getUserAvatar = (userId: number, avatarUrl?: string) => {
-        return avatarUrl ? avatarUrl : `/avatars/user-${userId}.jpg`;
-    };
 
     useEffect(() => {
         dispatch(GetPosts());
@@ -46,9 +44,6 @@ export const Content = () => {
     const startIndex = (currentPage - 1) * postsPerPage;
     const displayedPosts = filteredPosts.slice(startIndex, startIndex + postsPerPage);
 
-    const handlePostToggle = (id: string) => {
-        setExpandedPost(prev => (prev === id ? null : id));
-    };
 
     const handleCreatePost = (title: string, body: string, userId: string | number) => {
         const userIdParsed = typeof userId === 'number' ? userId : parseInt(userId);
@@ -64,17 +59,6 @@ export const Content = () => {
         setIsDrawerOpen(false);
     };
 
-    const handleEditPost = (post: IPost) => {
-        setPostToEdit(post);
-        setIsEditDrawerOpen(true);
-    };
-
-
-    const handleDeleteRequest = (postId: string) => {
-        setPostToDelete(postId);
-        setIsModalOpen(true);
-    };
-
     const handleDelete = () => {
         if (postToDelete) {
             dispatch(DeletePost(postToDelete));
@@ -88,17 +72,17 @@ export const Content = () => {
         setPostToDelete(null);
     };
 
-    if (isLoading === "loading") {
-        return <div>Loading posts...</div>;
+    if (isLoading === 'loading') {
+        return <LoadingModal />;
     }
 
-    if (isLoading === "failed") {
-        return <div>Error: {error}</div>;
+    if (isLoading === 'failed') {
+        return <ErrorModal error={error} onClose={() => {}} />;
     }
 
     return (
         <div>
-        <div className="flex mb-4">
+            <div className="flex mb-4">
                 <button
                     className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded mr-2"
                     onClick={() => setIsDrawerOpen(true)}
@@ -122,62 +106,14 @@ export const Content = () => {
                 {displayedPosts.map(post => {
                     const user = getUser(post.userId);
                     return (
-                        <div key={post.id} className="bg-white p-4 rounded-lg shadow-md mb-4">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-lg font-semibold text-gray-800 cursor-pointer" onClick={() => handlePostToggle(post.id)}>
-                                    {post.title}
-                                </h2>
-                                <FontAwesomeIcon
-                                    icon={faChevronUp}
-                                    className={`text-gray-500 transition-transform ${expandedPost === post.id ? 'rotate-180' : ''}`}
-                                    onClick={() => handlePostToggle(post.id)}
-                                />
-                            </div>
-                            {expandedPost === post.id && (
-                                <p className="mt-2 text-gray-600">{post.body}</p>
-                            )}
-                            {user && (
-                                <div className="mt-4 flex justify-between items-center text-sm text-gray-700 border-t pt-2">
-                                    <div className="flex items-center">
-                                        <img
-                                            alt="User Avatar"
-                                            className="w-14 h-14 rounded-full mr-4 object-cover"
-                                            src={getUserAvatar(user.id, user.avatar)}
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).src = '/avatars/user-default.jpg';
-                                            }}
-                                        />
-                                        <div>
-                                            <p className="text-lg font-semibold italic border-b border-[#2f89fc]">{user.name}</p>
-                                            <p className="flex items-center">
-                                                <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-blue-500" />
-                                                {user.email}
-                                            </p>
-                                            <p className="flex">
-                                                <FontAwesomeIcon icon={faGlobe} className="mr-2 text-green-500" />
-                                                <a href={`https://${user.website}`} target="_blank" className="underline">
-                                                    {user.website}
-                                                </a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex space-x-2">
-                                        <button
-                                            className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded"
-                                            onClick={() => handleEditPost(post)}
-                                        >
-                                            <FontAwesomeIcon icon={faPen} />
-                                        </button>
-                                        <button
-                                            className="bg-[#e6a5a5] text-[#fa0000] hover:bg-[#fa0000] hover:text-[#fafafa] hover:cursor-pointer w-[50px] h-[50px] rounded"
-                                            onClick={() => handleDeleteRequest(post.id)}
-                                        >
-                                            <FontAwesomeIcon icon={faTrash} />
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        <Post
+                            post={post}
+                            user={user}
+                            setPostToEdit={setPostToEdit}
+                            setIsEditDrawerOpen={setIsEditDrawerOpen}
+                            setPostToDelete={setPostToDelete}
+                            setIsModalOpen={setIsModalOpen}
+                            />
                     );
                 })}
 
