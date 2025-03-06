@@ -1,7 +1,4 @@
-import React from 'react';
 import {IProps} from "./IProps.ts";
-
-
 
 export const ConfirmationModal = ({ isOpen, onClose, onConfirm, message }: IProps) => {
     if (!isOpen) return null;

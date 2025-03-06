@@ -11,7 +11,7 @@ import {AppDispatch, RootState} from "../../../app/store/store.ts";
 import {GetPosts} from "../../utils/api/GET/GetPosts/GetPosts.ts";
 import {addPost} from "../../utils/api/GET/GetPosts/slices/getPostsSlice.ts";
 import {DeletePost} from "../../utils/api/DELETE/DeletePost/DeletePost.ts";
-import {ConfirmationModal} from "../ConfirmationModal/ConfirmationModal.tsx";
+import {ConfirmationModal} from "../Modals/ConfirmationModal/ConfirmationModal.tsx";
 import {Edit} from "../Edit/Edit.tsx";
 import {LoadingModal} from "../Modals/LoadingModal/LoadingModal.tsx";
 import {ErrorModal} from "../Modals/ErrorModal/ErrorModal.tsx";
@@ -107,13 +107,14 @@ export const Content = () => {
                     const user = getUser(post.userId);
                     return (
                         <Post
+                            key={post.id}
                             post={post}
                             user={user}
                             setPostToEdit={setPostToEdit}
                             setIsEditDrawerOpen={setIsEditDrawerOpen}
                             setPostToDelete={setPostToDelete}
                             setIsModalOpen={setIsModalOpen}
-                            />
+                        />
                     );
                 })}
 
