@@ -11,7 +11,7 @@ export const SideNav = ({ isOpen, closeSideNav }: { isOpen: boolean; closeSideNa
         <>
             {isOpen && <div className="fixed inset-0 bg-black opacity-50 md:hidden z-30" onClick={closeSideNav}></div>}
 
-            <nav className={`shadow-md bg-white text-black p-4 h-full fixed left-0 top-22 w-64 md:w-1/4 transition-transform transform z-40 
+            <nav className={`shadow-md bg-white text-black p-4 h-full fixed left-0 top-17 w-64 md:w-1/4 transition-transform transform z-40 
                 ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
 
 

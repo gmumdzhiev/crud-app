@@ -13,7 +13,7 @@ export const App = () => {
         <div className="flex flex-col h-screen">
             <Header toggleSideNav={() => setIsSideNavOpen(true)} />
 
-            <div className="flex flex-1 pt-22">
+            <div className="flex flex-1 pt-17">
                 <SideNav isOpen={isSideNavOpen} closeSideNav={() => setIsSideNavOpen(false)} />
                 <div className="flex-1 ml-0 md:ml-[25%] p-4">
                     <Routes>
