@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IPost } from "../../../../components/Content/interfaces/IPost.ts";
 import { IGetPostErrorHandle } from "./interfaces/IGetPost.ts";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import { db } from "../../../../../../firebaseConfig.ts";
 
 export const GetPosts = createAsyncThunk<
@@ -29,7 +29,7 @@ export const GetPosts = createAsyncThunk<
             );
 
             for (const newPost of newPosts) {
-                await addDoc(collection(db, "posts"), newPost);
+                await setDoc(doc(db, "posts", String(newPost.id)), newPost);
             }
 
             return [...firebasePosts, ...newPosts].sort(

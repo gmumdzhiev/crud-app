@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { IPost } from "../../../../../components/Content/interfaces/IPost.ts";
 import { GetPosts } from "../GetPosts.ts";
 import { DeletePost } from "../../../DELETE/DeletePost/DeletePost.ts";
+import {updatePost} from "../../../UPDATE/updatePost/updatePost.ts";
 
 
 const deletedPostIdsFromStorage = JSON.parse(localStorage.getItem("deletedPosts") || "[]");
@@ -48,6 +49,12 @@ const getPostsSlice = createSlice({
             .addCase(GetPosts.rejected, (state, action) => {
                 state.status = "failed";
                 state.error = action.payload;
+            })
+            .addCase(updatePost.fulfilled, (state, action) => {
+                const index = state.list.findIndex((post) => post.id === action.payload.id);
+                if (index !== -1) {
+                    state.list[index] = action.payload;
+                }
             })
             .addCase(DeletePost.pending, (state) => {
                 state.status = "loading";

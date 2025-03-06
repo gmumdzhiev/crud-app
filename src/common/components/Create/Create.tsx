@@ -111,6 +111,7 @@ export const Create = ({ onCreate }: { onCreate: (title: string, body: string, u
             console.error("Error adding post: ", error);
             toast.error("Failed to create post.");
         }
+
     };
 
 

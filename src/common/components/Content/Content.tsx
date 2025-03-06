@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import {faPlus, faPen, faTrash, faSearch, faChevronUp, faEnvelope, faGlobe} from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +12,7 @@ import {GetPosts} from "../../utils/api/GET/GetPosts/GetPosts.ts";
 import {addPost} from "../../utils/api/GET/GetPosts/slices/getPostsSlice.ts";
 import {DeletePost} from "../../utils/api/DELETE/DeletePost/DeletePost.ts";
 import {ConfirmationModal} from "../ConfirmationModal/ConfirmationModal.tsx";
+import {Edit} from "../Edit/Edit.tsx";
 
 export const Content = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +24,8 @@ export const Content = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [postToDelete, setPostToDelete] = useState<string | null>(null);
+    const [isEditDrawerOpen, setIsEditDrawerOpen] = useState<boolean>(false);
+    const [postToEdit, setPostToEdit] = useState<IPost | null>(null);
 
     const postsPerPage = 10;
 
@@ -59,6 +62,11 @@ export const Content = () => {
 
         dispatch(addPost(newPost));
         setIsDrawerOpen(false);
+    };
+
+    const handleEditPost = (post: IPost) => {
+        setPostToEdit(post);
+        setIsEditDrawerOpen(true);
     };
 
 
@@ -154,7 +162,10 @@ export const Content = () => {
                                         </div>
                                     </div>
                                     <div className="flex space-x-2">
-                                        <button className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded">
+                                        <button
+                                            className="bg-[#ebe8e8] text-[#474747] hover:bg-[#c1d9f7] hover:text-[#2f89fc] hover:cursor-pointer w-[50px] h-[50px] rounded"
+                                            onClick={() => handleEditPost(post)}
+                                        >
                                             <FontAwesomeIcon icon={faPen} />
                                         </button>
                                         <button
@@ -173,9 +184,22 @@ export const Content = () => {
                 {displayedPosts.length === 0 && <div>No posts available</div>}
             </div>
             <Pagination postsPerPage={postsPerPage} filteredPosts={filteredPosts} currentPage={currentPage} setCurrentPage={setCurrentPage} />
-            <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title="Create New Post">
-                <Create onCreate={handleCreatePost} />
+
+            <Drawer
+                isOpen={isDrawerOpen || isEditDrawerOpen}
+                onClose={() => {
+                    setIsDrawerOpen(false);
+                    setIsEditDrawerOpen(false);
+                }}
+                title={isEditDrawerOpen ? "Edit Post" : "Create New Post"}
+            >
+                {isEditDrawerOpen ? (
+                    postToEdit && <Edit post={postToEdit} onClose={() => setIsEditDrawerOpen(false)} />
+                ) : (
+                    <Create onCreate={handleCreatePost} />
+                )}
             </Drawer>
+
 
             <ConfirmationModal isOpen={isModalOpen} onClose={handleCancel} onConfirm={handleDelete} message="Are you sure you want to delete this post?" />
         </div>
