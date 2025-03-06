@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IPost } from "../../../../components/Content/interfaces/IPost.ts";
 import { IGetPostErrorHandle } from "./interfaces/IGetPost.ts";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../../../../../../firebaseConfig.ts";
 
 export const GetPosts = createAsyncThunk<
@@ -17,9 +17,7 @@ export const GetPosts = createAsyncThunk<
                 (doc) => doc.data() as IPost
             );
 
-            const response = await fetch(
-                `https://jsonplaceholder.typicode.com/posts`
-            );
+            const response = await fetch(`https://jsonplaceholder.typicode.com/posts`);
             if (!response.ok) {
                 throw new Error("Failed to fetch posts from JSONPlaceholder");
             }
@@ -30,11 +28,13 @@ export const GetPosts = createAsyncThunk<
                 (post) => !existingPostIds.has(post.id)
             );
 
-            const allPosts = [...firebasePosts, ...newPosts].sort(
+            for (const newPost of newPosts) {
+                await addDoc(collection(db, "posts"), newPost);
+            }
+
+            return [...firebasePosts, ...newPosts].sort(
                 (a, b) => Number(a.id) - Number(b.id)
             );
-
-            return allPosts;
         } catch (error) {
             return rejectWithValue(error.message);
         }
