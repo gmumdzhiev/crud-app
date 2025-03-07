@@ -16,7 +16,7 @@ export const Drawer = ({
                 onClick={onClose}
             />
 
-            <div className={`fixed right-0 top-0 h-full w-96 bg-white shadow-lg transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+            <div className={`fixed pt-17 right-0 top-0 h-full w-96 bg-white shadow-lg transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
                 <div className="p-4 flex justify-between items-center border-b border-[#2f89fc]">
                     <h2 className="text-lg font-semibold text-[#474747]">{title}</h2>
                     <button onClick={onClose} className="text-[#474747] hover:text-[#2f89fc] hover:cursor-pointer"><FontAwesomeIcon icon={faCircleXmark}/></button>

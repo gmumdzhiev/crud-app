@@ -120,7 +120,7 @@ export const Create = ({ onCreate }: { onCreate: (title: string, body: string, u
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
             <label className="flex items-center space-x-2">
                 <input type="checkbox" checked={isNewUser} onChange={() => setIsNewUser(!isNewUser)} />
-                <span>Create New User</span>
+                <span className={'text-[#474747]'}>Create New User</span>
             </label>
 
             {isNewUser ? (
