@@ -4,7 +4,7 @@ A powerful yet simple CRUD application built with React, TypeScript, Firebase, a
 ---
 
 ## Live version 🌍
-👉 https://gm-task-planner.netlify.app/
+👉 https://gm-crud.netlify.app/
 
 ## Getting Started 🚀
 
