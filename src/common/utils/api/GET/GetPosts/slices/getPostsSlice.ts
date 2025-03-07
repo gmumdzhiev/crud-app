@@ -48,7 +48,7 @@ const getPostsSlice = createSlice({
             })
             .addCase(GetPosts.rejected, (state, action) => {
                 state.status = "failed";
-                state.error = action.payload;
+                state.error = action.payload ? String(action.payload) : "An unknown error occurred";
             })
             .addCase(updatePost.fulfilled, (state, action) => {
                 const index = state.list.findIndex((post) => post.id === action.payload.id);
@@ -79,7 +79,8 @@ const getPostsSlice = createSlice({
             })
             .addCase(DeletePost.rejected, (state, action) => {
                 state.status = "failed";
-                state.error = action.payload;
+                state.error = action.payload ? String(action.payload) : "An unknown error occurred";
+
                 toast.error(`Error: ${action.payload}`, {
                     position: "bottom-right",
                     autoClose: 3000,

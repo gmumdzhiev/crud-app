@@ -34,7 +34,13 @@ export const GetUsers = createAsyncThunk<
 
             return [...firebaseUsers, ...newUsers];
         } catch (error) {
-            return rejectWithValue(error.message);
+            let errorMessage = "An unknown error occurred";
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+            return rejectWithValue({
+                message: errorMessage,
+            });
         }
     }
 );

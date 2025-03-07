@@ -24,8 +24,13 @@ export const updatePost = createAsyncThunk<IPost, IPost>(
 
             return updatedPost;
         } catch (error) {
-            console.error("Error updating post in Firestore:", error);
-            return rejectWithValue(error.message);
+            let errorMessage = "An unknown error occurred";
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+            return rejectWithValue({
+                message: errorMessage,
+            });
         }
     }
 );

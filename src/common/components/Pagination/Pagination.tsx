@@ -1,4 +1,3 @@
-import React from "react";
 import { IProps } from "./IProps";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBackwardFast, faChevronLeft, faChevronRight, faForwardFast } from "@fortawesome/free-solid-svg-icons";
